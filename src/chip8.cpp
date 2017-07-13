@@ -48,7 +48,7 @@ Chip8::Chip8() {
     //     0x90 = 1001 0000
     //     0xF0 = 1111 0000
     //     Ignoring the empty second nibble, the shape of the ones forms a zero.
-    static constexpr std::array<uint8_t, 16 * 5> sprites{
+    constexpr std::array<uint8_t, 16 * 5> sprites{
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
