@@ -74,21 +74,6 @@ Example : `chip8 -w 512 -H 256 ./assets/roms/BRIX`
 
 The Chip-8 originally took input through a hex keypad. The default keyboard mapping is arranged as follows:
 
-|Keyboard | Hex Keypad|
-     |---:|:---|
-| `1` `2` `3` `4`<br>`Q` `W` `E` `R`<br>`A` `S` `D` `F`<br>`Z` `X` `C` `V` | `1` `2` `3` `C`<br>`4` `5` `6` `D`<br>`7` `8` `9` `E`<br>`A` `0` `B` `F` |
-
-testing:
-
-|        Keyboard | Hex Keypad      |
-|             ---:|:---             |
-| `1` `2` `3` `4` | `1` `2` `3` `C` |
-| `Q` `W` `E` `R` | `4` `5` `6` `D` |
-| `A` `S` `D` `F` | `7` `8` `9` `E` |
-| `Z` `X` `C` `V` | `A` `0` `B` `F` |
-
-testing 2:
-
 | Keyboard | Hex Keypad |
 | :---:|:---: |
 | `1` `2` `3` `4`<br>`Q` `W` `E` `R`<br>`A` `S` `D` `F`<br>`Z` `X` `C` `V` | `1` `2` `3` `C`<br>`4` `5` `6` `D`<br>`7` `8` `9` `E`<br>`A` `0` `B` `F` |
