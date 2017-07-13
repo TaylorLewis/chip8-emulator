@@ -1,4 +1,4 @@
-# Chip-8 Emulator
+# Chip8 Emulator
 
 ![Brix](/docs/screenshots/BRIX.gif)
 
@@ -32,11 +32,7 @@ This will open the project in Visual Studio. Then:
 1. Open the **Terminal**, and type the following commands:
 2. If you don't have a package manager installed, like **[Homebrew](https://brew.sh/)**, type:
 `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-
-
 3. `brew install cmake sfml`
-
-
 4. `git clone https://github.com/TaylorLewis/chip8-emulator`
 5. `mkdir build`
 6. `cd build`
@@ -48,8 +44,6 @@ This will open the project in Visual Studio. Then:
 In the terminal, type:
 
 1. `sudo apt-get install cmake libsfml-dev`
-
-
 2. `git clone https://github.com/TaylorLewis/chip8-emulator`
 3. `mkdir build`
 4. `cd build`
@@ -80,9 +74,24 @@ Example : `chip8 -w 512 -H 256 ./assets/roms/BRIX`
 
 The Chip-8 originally took input through a hex keypad. The default keyboard mapping is arranged as follows:
 
-Keyboard | Hex Keypad
-     ---:|:---
-`1` `2` `3` `4`<br>`Q` `W` `E` `R`<br>`A` `S` `D` `F`<br>`Z` `X` `C` `V` | `1` `2` `3` `C`<br>`4` `5` `6` `D`<br>`7` `8` `9` `E`<br>`A` `0` `B` `F`
+|Keyboard | Hex Keypad|
+     |---:|:---|
+| `1` `2` `3` `4`<br>`Q` `W` `E` `R`<br>`A` `S` `D` `F`<br>`Z` `X` `C` `V` | `1` `2` `3` `C`<br>`4` `5` `6` `D`<br>`7` `8` `9` `E`<br>`A` `0` `B` `F` |
+
+testing:
+
+|        Keyboard | Hex Keypad      |
+|             ---:|:---             |
+| `1` `2` `3` `4` | `1` `2` `3` `C` |
+| `Q` `W` `E` `R` | `4` `5` `6` `D` |
+| `A` `S` `D` `F` | `7` `8` `9` `E` |
+| `Z` `X` `C` `V` | `A` `0` `B` `F` |
+
+testing 2:
+
+| Keyboard | Hex Keypad |
+| :---:|:---: |
+| `1` `2` `3` `4`<br>`Q` `W` `E` `R`<br>`A` `S` `D` `F`<br>`Z` `X` `C` `V` | `1` `2` `3` `C`<br>`4` `5` `6` `D`<br>`7` `8` `9` `E`<br>`A` `0` `B` `F` |
 
 `Pause` or `P` to pause.
 
