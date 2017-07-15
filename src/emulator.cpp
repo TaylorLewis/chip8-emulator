@@ -181,7 +181,7 @@ void Emulator::updateScreen() {
         glBegin(GL_POINTS); // Set vertices whereupon points are drawn.
         for (int row = 0; row < Chip8::HEIGHT; ++row) {
             for (int col = 0; col < Chip8::WIDTH; ++col) {
-                if (chip8.pixels[col + row * Chip8::WIDTH]) {
+                if (chip8.getPixelAt(col, row)) {
                     glVertex2f(col, row); }
             }
         }

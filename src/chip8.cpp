@@ -8,6 +8,10 @@
 
 uint8_t Chip8::getSoundTimer() { return sound_timer; }
 
+bool Chip8::getPixelAt(const int x, const int y) {
+    return virtual_screen[(x + 64 * y) % virtual_screen.size()];
+}
+
 Chip8::Chip8() {
     srand((unsigned int)time(NULL)); // Seed RNG
 
@@ -33,7 +37,7 @@ Chip8::Chip8() {
         key = false;
     }
 
-    for (bool &pixel : pixels) {
+    for (bool &pixel : virtual_screen) {
         pixel = false;
     }
 
@@ -135,7 +139,7 @@ void Chip8::executeNextInstruction() {
         switch (opcode) {
         // 00E0: Clear the screen.
         case 0x00E0:
-            for (bool &pixel : pixels) {
+            for (bool &pixel : virtual_screen) {
                 pixel = false;
             }
             draw_flag = true;
@@ -325,12 +329,12 @@ void Chip8::executeNextInstruction() {
 
             for (int col = 0; col < 8; ++col) {
                 const bool sprite_pixel = (sprite_row & (0x80 >> col));
-                const int pixel_location = (V[X] + col + (V[Y] + row) * 64) % pixels.size(); // Values >2047 wrap back around to 0.
+                const int pixel_location = (V[X] + col + (V[Y] + row) * 64) % virtual_screen.size(); // Values >2047 wrap back around to 0.
 
                 if (sprite_pixel) {
-                    if (pixels[pixel_location]) {
+                    if (virtual_screen[pixel_location]) {
                         V[0xF] = 1; }
-                    pixels[pixel_location] ^= 1;
+                    virtual_screen[pixel_location] ^= 1;
                 }
             }
         }

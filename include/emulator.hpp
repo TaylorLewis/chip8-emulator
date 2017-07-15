@@ -44,7 +44,7 @@ private:
     // Handles events like window focus, resizing, or closing.
     // Updates 'chip8.keys_pressed' with the state of corresponding keys in 'keypad_map'.
     void handleInput();
-    // Draws pixels in positions that 'chip8.pixels' designates, and displays the render.
+    // Renders the Chip-8's virtual screen, and then displays it.
     void updateScreen();
     // Plays a sound if the Chip-8 sound timer signals it.
     void handleSound();
