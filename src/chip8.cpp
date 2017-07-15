@@ -8,13 +8,8 @@
 
 uint8_t Chip8::getSoundTimer() { return sound_timer; }
 
-void Chip8::setPixelAt(const int x, const int y, const bool new_value) {
-    virtual_screen[y % HEIGHT][x % WIDTH] = new_value;
-}
 bool Chip8::getPixelAt(const int x, const int y) {
-    //return virtual_screen[(x + 64 * y) % virtual_screen.size()];
-    return virtual_screen[y % HEIGHT][x % WIDTH];
-}
+    return screen.getPixel(x, y); }
 
 Chip8::Chip8() {
     srand((unsigned int)time(NULL)); // Seed RNG
@@ -39,12 +34,6 @@ Chip8::Chip8() {
 
     for (bool &key : keys_pressed) {
         key = false;
-    }
-
-    for (auto &rows : virtual_screen) {
-        for (bool &pixel : rows) {
-            pixel = false;
-        }
     }
 
     // This sprite data is used for graphics in Chip-8 programs.
@@ -145,11 +134,7 @@ void Chip8::executeNextInstruction() {
         switch (opcode) {
         // 00E0: Clear the screen.
         case 0x00E0:
-            for (auto &rows : virtual_screen) {
-                for (bool &pixel : rows) {
-                    pixel = false;
-                }
-            }
+            screen.clear();
             draw_flag = true;
             pc += 2;
             break;
@@ -339,11 +324,11 @@ void Chip8::executeNextInstruction() {
                 const bool sprite_pixel = (sprite_row & (0x80 >> col));
 
                 if (sprite_pixel) {
-                    const bool current_pixel = getPixelAt(V[X] + col, V[Y] + row);
-
+                    const bool current_pixel = screen.getPixel(col + V[X], row + V[Y]);
+                    
                     if (current_pixel) {
                         V[0xF] = 1; }
-                    setPixelAt(V[X] + col, V[Y] + row, !current_pixel);
+                    screen.setPixel(col + V[X], row + V[Y], !current_pixel);
                 }
             }
         }
@@ -477,4 +462,25 @@ void Chip8::decrementTimers() {
         --delay_timer; }
     if (sound_timer > 0) {
         --sound_timer; }
+}
+
+
+
+Chip8::VirtualScreen::VirtualScreen() {
+    clear();
+}
+
+void Chip8::VirtualScreen::setPixel(const int x, const int y, const bool new_value) {
+    virtual_screen[y % HEIGHT][x % WIDTH] = new_value;
+}
+bool Chip8::VirtualScreen::getPixel(const int x, const int y) {
+    return virtual_screen[y % HEIGHT][x % WIDTH];
+}
+
+void Chip8::VirtualScreen::clear() {
+    for (auto &rows : virtual_screen) {
+        for (bool &pixel : rows) {
+            pixel = false;
+        }
+    }
 }

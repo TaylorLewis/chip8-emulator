@@ -59,17 +59,6 @@ private:
     // Decrements the timer variables if they are greater than zero.
     void decrementTimers();
 
-    void setPixelAt(const int x, const int y, const bool new_state);
-
-    // Two-dimensional array representation of the screen to be drawn.
-    // Pixels are represented as bools, as color depth is only 1-bit.
-    // Coordinates originate at the upper-left corner, and positive directions are right and down.
-    // Letting x be the left-to-right axis (width), and y be the up-to-down axis (height),
-    // the position (x,y) corresponds to virtual_screen[y][x].
-    // This should be about as fast as a one-dimensional array representation,
-    // given that static multi-dimensional arrays are stored contiguously.
-    std::array<std::array<bool, WIDTH>, HEIGHT> virtual_screen;
-
     // The program is stored directly into here, as well as fontset.
     // The program data is big endian.
     std::array<uint8_t, MEM_SIZE> memory;
@@ -95,6 +84,29 @@ private:
     // These count down from values set by the program, decrementing each instruction step.
     uint8_t delay_timer, // This is used by the program, like a register, but constantly decrementing.
             sound_timer; // Indicates a sound should be made, on any value greater than the 'SOUND_TIMER_THRESHOLD'.
+
+    // Intermediary representation of the screen to be displayed.
+    // Pixels are represented as bools, as color depth is only 1-bit.
+    // Coordinates originate at the upper-left corner, and positive directions are right and down.
+    // Letting x be the left-to-right axis (width), and y be the up-to-down axis (height),
+    // the position (x,y) corresponds to screen[y][x].
+    class VirtualScreen {
+        public:
+            VirtualScreen();
+
+            // Takes non-negative coordinates.
+            // If an argument exceeds the screen bounds, the remainder will be used.
+            void setPixel(const int x, const int y, const bool new_value);
+            bool getPixel(const int x, const int y);
+
+            // Sets all pixels to false.
+            void clear();
+
+        private:
+            std::array<std::array<bool, WIDTH>, HEIGHT> virtual_screen;
+    };
+
+    VirtualScreen screen;
 };
 
 #endif
