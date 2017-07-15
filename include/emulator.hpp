@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <unordered_map>
+#include <string>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -40,6 +41,14 @@ private:
     // This method may fail to load the sound (1), but continues execution regardless.
     // I rather like the little boop; but it's really not essential.
     void setupSound();
+
+    // Loads file into buffer and passes it to the Chip-8. If loading fails, tries to load "./assets/roms/PONG".
+    // Should that fail, or if the file is too large to be a Chip-8 ROM, then an exception is thrown.
+    //
+    // To my knowledge, there's no general way to detect whether a file is a Chip-8 ROM;
+    // there is no standard file extension or header. As such, any other input,
+    // that doesn't exceed the size limit, results in undefined behavior.
+    void loadFile();
 
     // Handles events like window focus, resizing, or closing.
     // Updates 'chip8.keys_pressed' with the state of corresponding keys in 'keypad_map'.

@@ -1,7 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <stdexcept>
 #include "time.h"
 
 #include "chip8.hpp"
@@ -10,10 +7,10 @@ bool Chip8::soundReady() {
     return sound_timer > SOUND_TIMER_THRESHOLD;
 }
 
-bool Chip8::getPixelAt(const int x, const int y) {
+bool Chip8::getPixelAt(const int& x, const int& y) {
     return screen.getPixel(x, y); }
 
-void Chip8::setKey(const uint8_t key, const bool value) {
+void Chip8::setKey(const uint8_t& key, const bool& value) {
     keys_pressed[key] = value;
 }
 
@@ -77,46 +74,10 @@ Chip8::Chip8() {
     }
 }
 
-void Chip8::load(const std::string& rom_path) {
-    std::ifstream rom(rom_path, std::ios::binary);
-
-    if (rom.fail()) {
-        std::cerr
-            << "Couldn't load file at designated path: " << rom_path << '\n'
-            << "Usage: chip8 [OPTION]... [FILE]\n\n"
-            << "Trying default: ./assets/roms/PONG" << std::endl;
-        rom.open("./assets/roms/PONG", std::ios::binary);
-        if (rom.fail()) {
-            std::cerr << "Couldn't load file at default path either." << std::endl;
-            throw std::runtime_error("Failed ifstream");
-        }
-    }
-    if (rom.bad()) {
-        std::cerr << "Unknown file error." << std::endl;
-        throw std::runtime_error("Bad ifstream");
-    }
-
-    // Get length of file
-    rom.seekg(0, std::ios::end);
-    const int rom_size = (int)rom.tellg();
-    rom.seekg(0, std::ios::beg);
-
-    if (rom_size > ROM_SIZE_MAX) {
-        std::cerr << "File too large to fit into memory."
-            << " Filesize/max: " << rom_size << "/" << ROM_SIZE_MAX << " bytes." << std::endl;
-        throw std::runtime_error("File too large");
-    }
-
-    // Copy ROM into buffer
-    char rom_buffer[ROM_SIZE_MAX];
-    rom.read(rom_buffer, rom_size);
-
-    // Transfer file into memory
+void Chip8::load(const char rom_buffer[], const int& rom_size) {
     for (int i = 0; i < rom_size; ++i) {
         memory[i + PROGRAM_START] = (uint8_t)rom_buffer[i];
     }
-
-    std::cout << "File loaded." << std::endl;
 }
 
 void Chip8::step() {
@@ -476,10 +437,10 @@ Chip8::VirtualScreen::VirtualScreen() {
     clear();
 }
 
-void Chip8::VirtualScreen::setPixel(const int x, const int y, const bool value) {
+void Chip8::VirtualScreen::setPixel(const int& x, const int& y, const bool& value) {
     virtual_screen[y % HEIGHT][x % WIDTH] = value;
 }
-bool Chip8::VirtualScreen::getPixel(const int x, const int y) {
+bool Chip8::VirtualScreen::getPixel(const int& x, const int& y) {
     return virtual_screen[y % HEIGHT][x % WIDTH];
 }
 

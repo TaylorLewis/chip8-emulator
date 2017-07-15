@@ -19,13 +19,8 @@ public:
 
     Chip8();
 
-    // Load Chip-8 ROM into memory. If loading fails, tries to load "./assets/roms/PONG".
-    // Should that fail, or if the file is too large to be a Chip-8 ROM, then an exception is thrown.
-    //
-    // To my knowledge, there's no general way to detect whether a file is a Chip-8 ROM;
-    // there is no standard file extension or header. As such, any other input,
-    // that doesn't exceed the size limit, results in undefined behavior.
-    void load(const std::string& rom_path);
+    // Load Chip-8 program data into memory.
+    void load(const char rom_buffer[], const int& rom_size);
 
     // Excecutes the next instruction and decrements timers.
     void step();
@@ -33,17 +28,16 @@ public:
     // Signals when it's time to play a sound.
     bool soundReady();
 
-    bool getPixelAt(const int x, const int y);
+    bool getPixelAt(const int& x, const int& y);
 
-    void setKey(const uint8_t key, const bool value);
+    void setKey(const uint8_t& key, const bool& value);
 
     // Indicates that the screen has changed, and should be redrawn.
     bool draw_flag;
 
 private:
     static constexpr int MEM_SIZE      = 0x1000, // RAM size, in bytes. 0x1000 = 4096.
-                         PROGRAM_START =  0x200, // Location in 'memory' where program data begins. 0x200 = 512.
-                         ROM_SIZE_MAX  = MEM_SIZE - PROGRAM_START; // Maximum size for Chip-8 ROM files
+                         PROGRAM_START =  0x200; // Location in 'memory' where program data begins. 0x200 = 512.
 
     // Value of 'sound_timer' that indicates a sound should be played.
     // Documentation seems to differ on whether the threshold is 0 or 1.
@@ -92,8 +86,8 @@ private:
 
             // Takes non-negative coordinates.
             // If an argument exceeds the screen bounds, the remainder will be used.
-            void setPixel(const int x, const int y, const bool value);
-            bool getPixel(const int x, const int y);
+            void setPixel(const int& x, const int& y, const bool& value);
+            bool getPixel(const int& x, const int& y);
 
             // Sets all pixels to false.
             void clear();
@@ -111,6 +105,10 @@ private:
     // A0BF
     // The keys are indexed in the array by their literal value in hex.
     std::array<bool, 0x10> keys_pressed;
+
+public:
+    // Maximum size for Chip-8 ROM files.
+    static constexpr int ROM_SIZE_MAX = MEM_SIZE - PROGRAM_START;
 };
 
 #endif

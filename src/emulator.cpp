@@ -1,10 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include <thread>
-#include <unordered_map>
+#include <stdexcept>
 
 #include "emulator.hpp"
-#include "chip8.hpp"
 
 // Default keyboard mapping.
 // (Keyboard -> Hex Keypad)
@@ -49,7 +49,7 @@ void Emulator::startup() {
     setupOpenGLContext();
     setupSound();
 
-    chip8.load(rom_path);
+    loadFile();
 }
 
 void Emulator::setupWindow() {
@@ -116,6 +116,45 @@ void Emulator::setupOpenGLContext() {
 void Emulator::setupSound() {
     sound_buffer.loadFromFile("assets/sound/boop.wav"); // Produces an error message if it fails
     sound.setBuffer(sound_buffer);
+}
+
+void Emulator::loadFile() {
+    std::ifstream rom(rom_path, std::ios::binary);
+
+    if (rom.fail()) {
+        std::cerr
+            << "Couldn't load file at designated path: " << rom_path << '\n'
+            << "Usage: chip8 [OPTION]... [FILE]\n\n"
+            << "Trying default: ./assets/roms/PONG" << std::endl;
+        rom.open("./assets/roms/PONG", std::ios::binary);
+        if (rom.fail()) {
+            std::cerr << "Couldn't load file at default path either." << std::endl;
+            throw std::runtime_error("Failed ifstream");
+        }
+    }
+    if (rom.bad()) {
+        std::cerr << "Unknown file error." << std::endl;
+        throw std::runtime_error("Bad ifstream");
+    }
+
+    // Get length of file
+    rom.seekg(0, std::ios::end);
+    const int rom_size = (int)rom.tellg();
+    rom.seekg(0, std::ios::beg);
+
+    if (rom_size > Chip8::ROM_SIZE_MAX) {
+        std::cerr << "File too large to fit into memory."
+            << " Filesize/max: " << rom_size << "/" << Chip8::ROM_SIZE_MAX << " bytes." << std::endl;
+        throw std::runtime_error("File too large");
+    }
+
+    // Copy ROM into buffer
+    char rom_buffer[Chip8::ROM_SIZE_MAX];
+    rom.read(rom_buffer, rom_size);
+
+    chip8.load(rom_buffer, rom_size);
+
+    std::cout << "File loaded." << std::endl;
 }
 
 void Emulator::handleInput() {
