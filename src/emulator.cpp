@@ -157,14 +157,14 @@ void Emulator::handleInput() {
 
                 auto key = keypad_map.find(event.key.code);
                 if (key != keypad_map.end()) {
-                    chip8.keys_pressed[key->second] = true; }
+                    chip8.setKey(key->second, true); }
                 break;
             }
 
             case sf::Event::KeyReleased: {
                 auto key = keypad_map.find(event.key.code);
                 if (key != keypad_map.end()) {
-                    chip8.keys_pressed[key->second] = false; }
+                    chip8.setKey(key->second, false); }
                 break;
             }
         }

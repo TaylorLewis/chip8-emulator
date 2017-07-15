@@ -13,6 +13,10 @@ bool Chip8::soundReady() {
 bool Chip8::getPixelAt(const int x, const int y) {
     return screen.getPixel(x, y); }
 
+void Chip8::setKey(const uint8_t key, const bool value) {
+    keys_pressed[key] = value;
+}
+
 Chip8::Chip8() {
     srand((unsigned int)time(NULL)); // Seed RNG
 
@@ -472,8 +476,8 @@ Chip8::VirtualScreen::VirtualScreen() {
     clear();
 }
 
-void Chip8::VirtualScreen::setPixel(const int x, const int y, const bool new_value) {
-    virtual_screen[y % HEIGHT][x % WIDTH] = new_value;
+void Chip8::VirtualScreen::setPixel(const int x, const int y, const bool value) {
+    virtual_screen[y % HEIGHT][x % WIDTH] = value;
 }
 bool Chip8::VirtualScreen::getPixel(const int x, const int y) {
     return virtual_screen[y % HEIGHT][x % WIDTH];

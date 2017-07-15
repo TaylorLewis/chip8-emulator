@@ -35,12 +35,7 @@ public:
 
     bool getPixelAt(const int x, const int y);
 
-    // The Chip-8 originally took input through a hex keypad., which was arranged as such:
-    // 123C
-    // 456D
-    // 789E
-    // A0BF
-    std::array<bool, 0x10> keys_pressed;
+    void setKey(const uint8_t key, const bool value);
 
     // Indicates that the screen has changed, and should be redrawn.
     bool draw_flag;
@@ -97,7 +92,7 @@ private:
 
             // Takes non-negative coordinates.
             // If an argument exceeds the screen bounds, the remainder will be used.
-            void setPixel(const int x, const int y, const bool new_value);
+            void setPixel(const int x, const int y, const bool value);
             bool getPixel(const int x, const int y);
 
             // Sets all pixels to false.
@@ -108,6 +103,14 @@ private:
     };
 
     VirtualScreen screen;
+
+    // The Chip-8 originally took input through a hex keypad., which was arranged as such:
+    // 123C
+    // 456D
+    // 789E
+    // A0BF
+    // The keys are indexed in the array by their literal value in hex.
+    std::array<bool, 0x10> keys_pressed;
 };
 
 #endif
