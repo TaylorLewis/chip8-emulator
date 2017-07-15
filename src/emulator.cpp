@@ -192,7 +192,7 @@ void Emulator::updateScreen() {
 }
 
 void Emulator::handleSound() {
-    if (chip8.getSoundTimer() > Chip8::SOUND_TIMER_THRESHOLD) {
+    if (chip8.soundReady()) {
         sound.play(); }
 }
     

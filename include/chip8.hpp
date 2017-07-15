@@ -17,10 +17,6 @@ public:
                          HEIGHT = 32,
                          ASPECT_RATIO = 2; // Ratio of width to height
 
-    // Value of 'sound_timer' that indicates a sound should be played.
-    // Documentation seems to differ on whether the threshold is 0 or 1.
-    static constexpr int SOUND_TIMER_THRESHOLD = 1;
-
     Chip8();
 
     // Load Chip-8 ROM into memory. If loading fails, tries to load "./assets/roms/PONG".
@@ -34,7 +30,8 @@ public:
     // Excecutes the next instruction and decrements timers.
     void step();
 
-    uint8_t getSoundTimer();
+    // Signals when it's time to play a sound.
+    bool soundReady();
 
     bool getPixelAt(const int x, const int y);
 
@@ -52,6 +49,10 @@ private:
     static constexpr int MEM_SIZE      = 0x1000, // RAM size, in bytes. 0x1000 = 4096.
                          PROGRAM_START =  0x200, // Location in 'memory' where program data begins. 0x200 = 512.
                          ROM_SIZE_MAX  = MEM_SIZE - PROGRAM_START; // Maximum size for Chip-8 ROM files
+
+    // Value of 'sound_timer' that indicates a sound should be played.
+    // Documentation seems to differ on whether the threshold is 0 or 1.
+    static constexpr int SOUND_TIMER_THRESHOLD = 1;
 
     // Reads the next opcode (2 bytes) and executes it.
     void executeNextInstruction();

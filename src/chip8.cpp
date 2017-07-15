@@ -6,7 +6,9 @@
 
 #include "chip8.hpp"
 
-uint8_t Chip8::getSoundTimer() { return sound_timer; }
+bool Chip8::soundReady() {
+    return sound_timer > SOUND_TIMER_THRESHOLD;
+}
 
 bool Chip8::getPixelAt(const int x, const int y) {
     return screen.getPixel(x, y); }
