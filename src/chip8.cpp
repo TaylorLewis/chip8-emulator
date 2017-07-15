@@ -8,8 +8,12 @@
 
 uint8_t Chip8::getSoundTimer() { return sound_timer; }
 
+void Chip8::setPixelAt(const int x, const int y, const bool new_value) {
+    virtual_screen[y % HEIGHT][x % WIDTH] = new_value;
+}
 bool Chip8::getPixelAt(const int x, const int y) {
-    return virtual_screen[(x + 64 * y) % virtual_screen.size()];
+    //return virtual_screen[(x + 64 * y) % virtual_screen.size()];
+    return virtual_screen[y % HEIGHT][x % WIDTH];
 }
 
 Chip8::Chip8() {
@@ -37,8 +41,10 @@ Chip8::Chip8() {
         key = false;
     }
 
-    for (bool &pixel : virtual_screen) {
-        pixel = false;
+    for (auto &rows : virtual_screen) {
+        for (bool &pixel : rows) {
+            pixel = false;
+        }
     }
 
     // This sprite data is used for graphics in Chip-8 programs.
@@ -139,8 +145,10 @@ void Chip8::executeNextInstruction() {
         switch (opcode) {
         // 00E0: Clear the screen.
         case 0x00E0:
-            for (bool &pixel : virtual_screen) {
-                pixel = false;
+            for (auto &rows : virtual_screen) {
+                for (bool &pixel : rows) {
+                    pixel = false;
+                }
             }
             draw_flag = true;
             pc += 2;
@@ -329,12 +337,13 @@ void Chip8::executeNextInstruction() {
 
             for (int col = 0; col < 8; ++col) {
                 const bool sprite_pixel = (sprite_row & (0x80 >> col));
-                const int pixel_location = (V[X] + col + (V[Y] + row) * 64) % virtual_screen.size(); // Values >2047 wrap back around to 0.
 
                 if (sprite_pixel) {
-                    if (virtual_screen[pixel_location]) {
+                    const bool current_pixel = getPixelAt(V[X] + col, V[Y] + row);
+
+                    if (current_pixel) {
                         V[0xF] = 1; }
-                    virtual_screen[pixel_location] ^= 1;
+                    setPixelAt(V[X] + col, V[Y] + row, !current_pixel);
                 }
             }
         }

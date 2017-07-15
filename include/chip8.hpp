@@ -36,9 +36,7 @@ public:
 
     uint8_t getSoundTimer();
 
-    // Returns the pixel state (of the 'virtual_screen' array) at coordiates (row, col),
-    // as per the function described in the description of 'virtual_screen'.
-    bool getPixelAt(const int row, const int col);
+    bool getPixelAt(const int x, const int y);
 
     // The Chip-8 originally took input through a hex keypad., which was arranged as such:
     // 123C
@@ -61,13 +59,16 @@ private:
     // Decrements the timer variables if they are greater than zero.
     void decrementTimers();
 
-    // Single-dimensional array representation of the screen to be drawn.
-    // Pixels (as bools) are arranged starting from the top-left of the screen,
-    // left to right, wrapping around to the left-most position in the row below.
-    // Letting x be the left-right axis (width), and y be the up-down axis (height),
-    // the position (x,y) corresponds to virtual_screen[(x + 64*y) % virtual_screen.size()]
-    // (wrapping back to 0 when greater than the array size).
-    std::array<bool, HEIGHT * WIDTH> virtual_screen;
+    void setPixelAt(const int x, const int y, const bool new_state);
+
+    // Two-dimensional array representation of the screen to be drawn.
+    // Pixels are represented as bools, as color depth is only 1-bit.
+    // Coordinates originate at the upper-left corner, and positive directions are right and down.
+    // Letting x be the left-to-right axis (width), and y be the up-to-down axis (height),
+    // the position (x,y) corresponds to virtual_screen[y][x].
+    // This should be about as fast as a one-dimensional array representation,
+    // given that static multi-dimensional arrays are stored contiguously.
+    std::array<std::array<bool, WIDTH>, HEIGHT> virtual_screen;
 
     // The program is stored directly into here, as well as fontset.
     // The program data is big endian.
