@@ -45,11 +45,11 @@ void Emulator::run() {
 }
 
 void Emulator::startup() {
+    loadFile();
+
     setupWindow();
     setupOpenGLContext();
     setupSound();
-
-    loadFile();
 }
 
 void Emulator::setupWindow() {
