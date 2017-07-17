@@ -94,7 +94,7 @@ The Chip-8 originally took input through a hex keypad. The default keyboard mapp
 
 ## Legal
 
-This project is licensed under the terms of the MIT license.
+This project is licensed under the terms of the [MIT license](https://tldrlegal.com/license/mit-license).
 
 The ROMs included are generally considered to be in the public domain. For all intents and purposes, this appears to be a safe enough assumption.
 
