@@ -1,7 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <chrono>
-#include <thread>
 #include <stdexcept>
 
 #include "emulator.hpp"
@@ -33,14 +31,24 @@ void Emulator::run() {
     startup();
 
     running = true;
+    auto previous = std::chrono::high_resolution_clock::now(); // Time point of beginning of previous loop (previous 'current')
+    auto lag = std::chrono::high_resolution_clock::duration::zero(); // Amount of time that emulator is "behind"
+
     while (running) {
+        auto current = std::chrono::high_resolution_clock::now();
+        auto elapsed = current - previous;
+        previous = current;
+
         handleInput();
         if (have_focus && !paused) {
-            chip8.step();
+            lag += elapsed;
+            while (lag >= TIME_PER_STEP) {
+                chip8.step();
+                lag -= TIME_PER_STEP;
+            }
             updateScreen();
             handleSound();
         }
-        sleep();
     }
 }
 
@@ -233,12 +241,4 @@ void Emulator::updateScreen() {
 void Emulator::handleSound() {
     if (chip8.soundReady()) {
         sound.play(); }
-}
-    
-void Emulator::sleep() {
-    // Time to sleep between loops, in microseconds. The particular number just a guess;
-    // there appears to be no specification at all for timing on the Chip8.
-    constexpr int sleep_time = 1000;
-
-    std::this_thread::sleep_for(std::chrono::microseconds(sleep_time));
 }

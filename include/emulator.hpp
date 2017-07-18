@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <unordered_map>
 #include <string>
+#include <chrono>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -16,8 +17,9 @@ class Emulator {
 public:
     Emulator();
     // The main emulation loop.
-    // Takes input, executes the next instruction, updates screen, plays sound,
-    // and then sleeps a short period (to avoid running far too fast).
+    // Takes input, executes the next instruction, updates screen, and plays sound.
+    // The next Chip-8 cycle will only occur if the emulator is on time or behind.
+    // Extra cycles will occur if the emulator is behind by a whole period ('TIME_PER_STEP') or more.
     void run();
 
     int window_width;
@@ -28,6 +30,10 @@ private:
     // Default window size parameters.
     static constexpr int WINDOW_WIDTH_DEFAULT  = 1024,
                          WINDOW_HEIGHT_DEFAULT =  512;
+
+    // Target period of Chip-8 execution.
+    // The Chip-8 has little specification for timing; so this is a guess based largely on feel.
+    static constexpr std::chrono::microseconds TIME_PER_STEP = std::chrono::microseconds(1666); // ~600 cycles per second.
 
     // Mapping from keyboard to virtual hex keypad.
     static const std::unordered_map<int, uint8_t> keypad_map;
@@ -57,10 +63,6 @@ private:
     void updateScreen();
     // Plays a sound if the Chip-8 sound timer signals it.
     void handleSound();
-    // Used to slow down emulation to maintain humane pace.
-    // TODO: Make speed more consistent across faster/slower hardware.
-    // TODO: Make speed customizable.
-    void sleep();
 
     int pixel_size;
     sf::Window window;

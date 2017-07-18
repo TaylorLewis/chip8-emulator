@@ -88,7 +88,6 @@ The Chip-8 originally took input through a hex keypad. The default keyboard mapp
 * GUI
 * Save/load state
 * Debugger
-* More robust timing
 * Customizable color / speed / controls
 * Save configuration
 
