@@ -357,7 +357,12 @@ void Chip8::executeNextInstruction() {
         }
 
         // FX15: Set the delay timer to the value of register VX.
+        // Undocumented feature: VF is set to 1 when there is a range overflow(I + VX>0xFFF), and to 0 when there isn't.
         case 0xF015:
+            if (I + V[X] > 0xFFF) {
+                V[0xF] = 1; }
+            else {
+                V[0xF] = 0; }
             delay_timer = V[X];
             pc += 2;
             break;
