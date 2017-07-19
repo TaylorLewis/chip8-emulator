@@ -30,6 +30,8 @@ public:
 
     bool getPixelAt(const int& x, const int& y);
 
+    void setOldInstructions(const bool& value);
+
     void setKey(const uint8_t& key, const bool& value);
 
     // Indicates that the screen has changed, and should be redrawn.
@@ -74,6 +76,11 @@ private:
     // These count down from values set by the program, decrementing each instruction step.
     uint8_t delay_timer, // This is used by the program, like a register, but constantly decrementing.
             sound_timer; // Indicates a sound should be made, on any value greater than the 'SOUND_TIMER_THRESHOLD'.
+
+    // Some instructions have changed slightly from the originals.
+    // This toggles the use of the old instructions rather than their contemporary versions.
+    // Some ROMs require this.
+    bool old_instructions;
 
     // Intermediary representation of the screen to be displayed.
     // Pixels are represented as bools, as color depth is only 1-bit.

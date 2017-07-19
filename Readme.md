@@ -65,10 +65,13 @@ Options:
         
     -H <int>, --height <int>
     	Set the window height. Default:  512
+    
+    -o, --old
+        Changes some instructions to their old versions.
+        Necessary for some ROMs to function properly.
 ```
     
 Example : `chip8 -w 512 -H 256 ./assets/roms/BRIX`
-
 
 ## Controls
 

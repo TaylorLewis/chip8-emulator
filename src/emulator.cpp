@@ -242,3 +242,6 @@ void Emulator::handleSound() {
     if (chip8.soundReady()) {
         sound.play(); }
 }
+
+void Emulator::setOldInstructions(const bool& value) {
+    chip8.setOldInstructions(value); }

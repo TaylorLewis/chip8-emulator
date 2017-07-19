@@ -14,6 +14,9 @@ void Chip8::setKey(const uint8_t& key, const bool& value) {
     keys_pressed[key] = value;
 }
 
+void Chip8::setOldInstructions(const bool& value) {
+    old_instructions = value; }
+
 Chip8::Chip8() {
     srand((unsigned int)time(NULL)); // Seed RNG
 
@@ -25,6 +28,8 @@ Chip8::Chip8() {
 
     delay_timer = 0;
     sound_timer = 0;
+
+    old_instructions = false;
 
     for (uint8_t &element : memory) {
         element = 0;
@@ -218,12 +223,18 @@ void Chip8::executeNextInstruction() {
             pc += 2;
             break;
 
-        // 8XY6: Store the value of register VY shifted right one bit in register VX.
-        //       Set register VF to the least significant bit prior to the shift
-        //       (the bit that fell off).
+        // 8XY6: Shifts VX right by one bit.
+        //       Set register VF to the least significant bit prior to the shift (the bit that fell off).
+        //       (Old:) Instead of shifting VX, store the value of register VY shifted right one bit in register VX.
         case 0x8006:
-            V[X] = V[Y] >> 1;
-            V[0xF] = V[Y] & 1;
+            if (old_instructions) {
+                V[0xF] = V[Y] & 1;
+                V[X] = V[Y] >> 1;
+            }
+            else {
+                V[0xF] = V[X] & 1;
+                V[X] = V[X] >> 1;
+            }
             pc += 2;
             break;
 
@@ -239,12 +250,18 @@ void Chip8::executeNextInstruction() {
             pc += 2;
             break;
 
-        // 8XYE: Store the value of register VY shifted left one bit in register VX.
-        //       Set register VF to the most significant bit prior to the shift
-        //       (the bit that fell off).
+        // 8XYE: Shifts VX left by one bit.
+        //       Set register VF to the most significant bit prior to the shift (the bit that fell off).
+        //       (Old:) Instead of shifting VX, store the value of register VY shifted left one bit in register VX.
         case 0x800E:
-            V[X] = V[Y] << 1;
-            V[0xF] = V[Y] >> 7;
+            if (old_instructions) {
+                V[0xF] = V[Y] >> 7;
+                V[X] = V[Y] << 1;
+            }
+            else {
+                V[0xF] = V[X] >> 7;
+                V[X] = V[X] << 1;
+            }
             pc += 2;
             break;
 
@@ -357,7 +374,7 @@ void Chip8::executeNextInstruction() {
         }
 
         // FX15: Set the delay timer to the value of register VX.
-        // Undocumented feature: VF is set to 1 when there is a range overflow(I + VX>0xFFF), and to 0 when there isn't.
+        // (Undocumented feature:) VF is set to 1 when there is a range overflow(I + VX>0xFFF), and to 0 when there isn't.
         case 0xF015:
             if (I + V[X] > 0xFFF) {
                 V[0xF] = 1; }
@@ -396,22 +413,25 @@ void Chip8::executeNextInstruction() {
             break;
 
         // FX55: Store the values of registers V0 to VX inclusive in memory starting at address I.
-        //       I is set to I + X + 1 after operation.
+        //       (Old:) I is set to I + X + 1 after operation.
         case 0xF055:
             for (int i = 0; i <= X; ++i) {
                 memory[I + i] = V[i];
             }
-            I = I + X + 1;
+            if (old_instructions) {
+                I += X + 1; }
             pc += 2;
             break;
 
         // FX65: Fill registers V0 to VX inclusive with the values stored in memory starting at address I.
-        //       I is set to I + X + 1 after operation.
+        //       (Old:) I is set to I + X + 1 after operation.
+        //
         case 0xF065:
             for (int i = 0; i <= X; ++i) {
                 V[i] = memory[I + i];
             }
-            I = I + X + 1;
+            if (old_instructions) {
+                I += X + 1; }
             pc += 2;
             break;
 

@@ -46,7 +46,10 @@ void handleArguments(const int& argc, char* argv[], Emulator& emulator) {
                 << "\t-w <int>, --width <int>\n"
                 << "\t\tSet the window width.  (Default: 1024)\n\n"
                 << "\t-H <int>, --height <int>\n"
-                << "\t\tSet the window height. (Default:  512)"
+                << "\t\tSet the window height. (Default:  512)\n\n"
+                << "\t-o, --old\n"
+                << "\t\tChanges some instructions to their old versions.\n"
+                << "\t\tNecessary for some ROMs to function properly."
                 // TODO: Add more options, like color.
                 << std::endl;
             exit(EXIT_SUCCESS);
@@ -72,6 +75,10 @@ void handleArguments(const int& argc, char* argv[], Emulator& emulator) {
             else {
                 std::cerr << "Custom height setting failed (No number specified)." << std::endl; }
             ++i;
+        }
+        else if (arg == "-o"
+                  || arg == "--old") {
+            emulator.setOldInstructions(true);
         }
         else if (i == argc - 1) {
             emulator.rom_path = arg;

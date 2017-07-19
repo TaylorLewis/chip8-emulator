@@ -22,6 +22,10 @@ public:
     // Extra cycles will occur if the emulator is behind by a whole period ('TIME_PER_STEP') or more.
     void run();
 
+    // Sets 'old_instructions' in Chip-8,
+    // which alters some instructions back to their old versions.
+    void setOldInstructions(const bool& value);
+
     int window_width;
     int window_height;
     std::string rom_path;
