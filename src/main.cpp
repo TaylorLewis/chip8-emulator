@@ -5,6 +5,23 @@
 
 #include "emulator.hpp"
 
+void printHelpMessage() {
+    std::cout
+        << "A Chip-8 emulator.\n\n"
+        << "Usage: chip8 [options] <path-to-rom-file>\n\n"
+        << "Options:\n"
+        << "\t-h  --help\n"
+        << "\t\tPrint this help text and exit.\n\n"
+        << "\t-w <int>, --width <int>\n"
+        << "\t\tSet the window width.  (Default: 1024)\n\n"
+        << "\t-H <int>, --height <int>\n"
+        << "\t\tSet the window height. (Default:  512)\n\n"
+        << "\t-o, --old\n"
+        << "\t\tChanges some instructions to their old versions.\n"
+        << "\t\tNecessary for some ROMs to function properly."
+        << std::endl;
+}
+
 // Returns true if the argument can be converted to an integer,
 // and the result is non-negative and no larger than 'INT_MAX'.
 bool verifySizeInput(const std::string& inputStr, const std::string& dimension) {
@@ -37,21 +54,7 @@ void handleArguments(const int& argc, char* argv[], Emulator& emulator) {
 
         if (arg == "-h"
              || arg == "--help") {
-            std::cout
-                << "A Chip-8 emulator.\n\n"
-                << "Usage: chip8 [options] <path-to-rom-file>\n\n"
-                << "Options:\n"
-                << "\t-h  --help\n"
-                << "\t\tPrint this help text and exit.\n\n"
-                << "\t-w <int>, --width <int>\n"
-                << "\t\tSet the window width.  (Default: 1024)\n\n"
-                << "\t-H <int>, --height <int>\n"
-                << "\t\tSet the window height. (Default:  512)\n\n"
-                << "\t-o, --old\n"
-                << "\t\tChanges some instructions to their old versions.\n"
-                << "\t\tNecessary for some ROMs to function properly."
-                // TODO: Add more options, like color.
-                << std::endl;
+            printHelpMessage();
             exit(EXIT_SUCCESS);
         }
         else if (arg == "-w"
