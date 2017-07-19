@@ -460,7 +460,7 @@ void Chip8::decrementTimers() {
         if (sound_timer > 0) {
             --sound_timer; }
 
-        time_since_last_decrement = std::chrono::high_resolution_clock::duration::zero();;
+        time_since_last_decrement = std::chrono::high_resolution_clock::duration::zero();
     }
 }
 

@@ -75,6 +75,20 @@ private:
     bool running,    // Whether the emulator is running.
          paused,     // Toggled by the pause key ('Pause' or 'P')
          have_focus; // Whether the window has focus
+
+    // Tracks time elapsed between calls to update().
+    class Timer {
+        public:
+            Timer();
+            // Updates 'elapsed'
+            void update();
+            std::chrono::high_resolution_clock::duration getElapsed();
+        private:
+            // Difference between last two calls to update()
+            std::chrono::high_resolution_clock::duration elapsed;
+            // Time of last call to update()
+            std::chrono::high_resolution_clock::time_point previous;
+    };
 };
 
 #endif

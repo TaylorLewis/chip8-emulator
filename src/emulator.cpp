@@ -27,25 +27,39 @@ Emulator::Emulator() {
     window_height = WINDOW_HEIGHT_DEFAULT;
 }
 
+Emulator::Timer::Timer() {
+    previous = std::chrono::high_resolution_clock::now();
+    update();
+}
+
+void Emulator::Timer::update() {
+    auto current = std::chrono::high_resolution_clock::now();
+    elapsed = current - previous;
+    previous = current;
+}
+
+std::chrono::high_resolution_clock::duration Emulator::Timer::getElapsed() {
+    return elapsed;
+}
+
 void Emulator::run() {
     startup();
 
     running = true;
-    auto previous = std::chrono::high_resolution_clock::now(); // Time of beginning of previous loop (previous 'current')
-    auto lag = std::chrono::high_resolution_clock::duration::zero(); // Amount of time that emulator is "behind"
+    // Time Chip-8 is considered to have been running (doesn't include paused and unfocused time).
+    auto run_time = std::chrono::high_resolution_clock::duration::zero();
+    Timer timer;
 
     while (running) {
-        auto current = std::chrono::high_resolution_clock::now();
-        auto elapsed = current - previous;
-        previous = current;
+        timer.update();
 
         handleInput();
         if (have_focus && !paused) {
-            lag += elapsed;
+            run_time += timer.getElapsed();
             // This loop is for "catching up" to target rate, skipping input, screen, and sound updates to get there
-            while (lag >= Chip8::TIME_PER_STEP) {
+            while (run_time >= Chip8::TIME_PER_STEP) {
                 chip8.step();
-                lag -= Chip8::TIME_PER_STEP;
+                run_time -= Chip8::TIME_PER_STEP;
             }
             updateScreen();
             handleSound();
