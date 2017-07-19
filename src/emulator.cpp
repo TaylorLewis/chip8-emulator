@@ -27,21 +27,6 @@ Emulator::Emulator() {
     window_height = WINDOW_HEIGHT_DEFAULT;
 }
 
-Emulator::Timer::Timer() {
-    previous = std::chrono::high_resolution_clock::now();
-    update();
-}
-
-void Emulator::Timer::update() {
-    auto current = std::chrono::high_resolution_clock::now();
-    elapsed = current - previous;
-    previous = current;
-}
-
-std::chrono::high_resolution_clock::duration Emulator::Timer::getElapsed() {
-    return elapsed;
-}
-
 void Emulator::run() {
     startup();
 
@@ -260,3 +245,20 @@ void Emulator::handleSound() {
 
 void Emulator::setOldInstructions(const bool& value) {
     chip8.setOldInstructions(value); }
+
+
+
+Emulator::Timer::Timer() {
+    previous = std::chrono::high_resolution_clock::now();
+    update();
+}
+
+void Emulator::Timer::update() {
+    auto current = std::chrono::high_resolution_clock::now();
+    elapsed = current - previous;
+    previous = current;
+}
+
+std::chrono::high_resolution_clock::duration Emulator::Timer::getElapsed() {
+    return elapsed;
+}
