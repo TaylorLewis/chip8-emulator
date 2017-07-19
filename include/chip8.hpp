@@ -7,9 +7,10 @@
 // Models a Chip-8 CPU. Also contains the memory.
 // Interprets Chip-8 instructions.
 //
-// I'll explain some things, but for a detailed specification, read:
-// http://mattmik.com/files/chip8/mastering/chip8.html ,
-// which is the specification that this program mostly draws from.
+// I'll explain some things, but for more detailed specification, read:
+// https://en.wikipedia.org/wiki/CHIP-8
+// http://mattmik.com/files/chip8/mastering/chip8.html
+// which are the specifications that this program mostly draws from.
 class Chip8 {
 public:
     // Internal resolution.

@@ -102,7 +102,8 @@ The ROMs included are generally considered to be in the public domain. For all i
 
 ## References
 
-The Chip-8 specification used was largely derived from:
+This project derives largely from two Chip-8 specifications. In order of priority:
+* https://en.wikipedia.org/wiki/CHIP-8
 * http://mattmik.com/files/chip8/mastering/chip8.html
 
 ![Pong](/docs/screenshots/PONG.gif)
