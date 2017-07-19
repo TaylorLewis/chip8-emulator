@@ -48,7 +48,7 @@ private:
     static constexpr int SOUND_TIMER_THRESHOLD = 1;
 
     // Period of timer decrements. Approximately 1/60 of a second.
-    static constexpr std::chrono::microseconds TIME_PER_TIMER_DECREMENT = std::chrono::microseconds(16666);
+    static constexpr std::chrono::microseconds TIME_PER_TIMER_DECREMENT = std::chrono::microseconds(16660);
 
     // Reads the next opcode (2 bytes) and executes it.
     void executeNextInstruction();
@@ -82,9 +82,8 @@ private:
     uint8_t delay_timer, // This is used by the program, like a register, but constantly decrementing.
             sound_timer; // Indicates a sound should be made, on any value greater than the 'SOUND_TIMER_THRESHOLD'.
 
-    // These help keep track of time for decrementTimers().
-    std::chrono::high_resolution_clock::time_point previous; // Time of previous call to decrementTimers()
-    std::chrono::high_resolution_clock::duration lag; // Accumulates surplus time between calls to decrementTimers()
+    // Accumulates surplus time between calls to decrementTimers()
+    std::chrono::high_resolution_clock::duration time_since_last_decrement;
 
     // Some instructions have changed slightly from the originals.
     // This toggles the use of the old instructions rather than their contemporary versions.
@@ -125,6 +124,10 @@ private:
 public:
     // Maximum size for Chip-8 ROM files.
     static constexpr int ROM_SIZE_MAX = MEM_SIZE - PROGRAM_START;
+
+    // Target period of Chip-8 execution.
+    // The Chip-8 has little specification for timing; so this is a guess based largely on feel.
+    static constexpr std::chrono::nanoseconds TIME_PER_STEP = TIME_PER_TIMER_DECREMENT / 10; // ~1/600 of a second
 };
 
 #endif

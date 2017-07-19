@@ -29,8 +29,7 @@ Chip8::Chip8() {
     delay_timer = 0;
     sound_timer = 0;
 
-    previous = std::chrono::high_resolution_clock::now();
-    lag = std::chrono::high_resolution_clock::duration::zero();
+    time_since_last_decrement = std::chrono::high_resolution_clock::duration::zero();
 
     old_instructions = false;
 
@@ -453,18 +452,15 @@ void Chip8::executeNextInstruction() {
 }
 
 void Chip8::decrementTimers() {
-    auto current = std::chrono::high_resolution_clock::now();
-    auto elapsed = current - previous;
-    previous = current;
-    lag += elapsed;
+    time_since_last_decrement += TIME_PER_STEP;
 
-    while (lag >= TIME_PER_TIMER_DECREMENT) {
+    if (time_since_last_decrement >= TIME_PER_TIMER_DECREMENT) {
         if (delay_timer > 0) {
             --delay_timer; }
         if (sound_timer > 0) {
             --sound_timer; }
 
-        lag -= TIME_PER_TIMER_DECREMENT;
+        time_since_last_decrement = std::chrono::high_resolution_clock::duration::zero();;
     }
 }
 

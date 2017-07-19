@@ -31,7 +31,7 @@ void Emulator::run() {
     startup();
 
     running = true;
-    auto previous = std::chrono::high_resolution_clock::now(); // Time point of beginning of previous loop (previous 'current')
+    auto previous = std::chrono::high_resolution_clock::now(); // Time of beginning of previous loop (previous 'current')
     auto lag = std::chrono::high_resolution_clock::duration::zero(); // Amount of time that emulator is "behind"
 
     while (running) {
@@ -42,9 +42,10 @@ void Emulator::run() {
         handleInput();
         if (have_focus && !paused) {
             lag += elapsed;
-            while (lag >= TIME_PER_STEP) {
+            // This loop is for "catching up" to target rate, skipping input, screen, and sound updates to get there
+            while (lag >= Chip8::TIME_PER_STEP) {
                 chip8.step();
-                lag -= TIME_PER_STEP;
+                lag -= Chip8::TIME_PER_STEP;
             }
             updateScreen();
             handleSound();
