@@ -231,10 +231,10 @@ void Chip8::executeNextInstruction() {
         //       Set VF to 0 if a borrow occurs.
         //       Set VF to 1 if a borrow does not occur.
         case 0x8007:
-            if (V[X] > V[Y]) {
-                V[0xF] = 1; }
-            else {
+            if (V[Y] < V[X]) {
                 V[0xF] = 0; }
+            else {
+                V[0xF] = 1; }
             V[X] = V[Y] - V[X];
             pc += 2;
             break;
