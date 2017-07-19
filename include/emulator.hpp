@@ -37,7 +37,7 @@ private:
 
     // Target period of Chip-8 execution.
     // The Chip-8 has little specification for timing; so this is a guess based largely on feel.
-    static constexpr std::chrono::microseconds TIME_PER_STEP = std::chrono::microseconds(1666); // ~600 cycles per second.
+    static constexpr std::chrono::microseconds TIME_PER_STEP = std::chrono::microseconds(1666); // ~1/600 of a second
 
     // Mapping from keyboard to virtual hex keypad.
     static const std::unordered_map<int, uint8_t> keypad_map;

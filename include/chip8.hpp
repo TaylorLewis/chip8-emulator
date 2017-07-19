@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <array>
+#include <chrono>
 
 // Models a Chip-8 CPU. Also contains the memory.
 // Interprets Chip-8 instructions.
@@ -46,10 +47,13 @@ private:
     // Documentation seems to differ on whether the threshold is 0 or 1.
     static constexpr int SOUND_TIMER_THRESHOLD = 1;
 
+    // Period of timer decrements. Approximately 1/60 of a second.
+    static constexpr std::chrono::microseconds TIME_PER_TIMER_DECREMENT = std::chrono::microseconds(16666);
+
     // Reads the next opcode (2 bytes) and executes it.
     void executeNextInstruction();
 
-    // Decrements the timer variables if they are greater than zero.
+    // Decrements the timer variables if they are greater than zero, at a rate of 60 hertz.
     void decrementTimers();
 
     // The program is stored directly into here, as well as fontset.
@@ -77,6 +81,10 @@ private:
     // These count down from values set by the program, decrementing each instruction step.
     uint8_t delay_timer, // This is used by the program, like a register, but constantly decrementing.
             sound_timer; // Indicates a sound should be made, on any value greater than the 'SOUND_TIMER_THRESHOLD'.
+
+    // These help keep track of time for decrementTimers().
+    std::chrono::high_resolution_clock::time_point previous; // Time of previous call to decrementTimers()
+    std::chrono::high_resolution_clock::duration lag; // Accumulates surplus time between calls to decrementTimers()
 
     // Some instructions have changed slightly from the originals.
     // This toggles the use of the old instructions rather than their contemporary versions.
