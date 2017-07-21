@@ -16,26 +16,19 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH};${CMAKE_SO
 
 # Add project files
 include_directories("${PROJECT_SOURCE_DIR}/include")
-set(SOURCE_FILES src/main.cpp
-                 src/chip8.cpp
+set(SOURCE_FILES src/chip8.cpp
                  src/emulator.cpp
+                 src/main.cpp
                  include/chip8.hpp
                  include/emulator.hpp)
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
 
 # Add SFML
 set(SFML_ROOT CACHE PATH "Set SFML_ROOT to SFML's top-level path (containing \"include\" and \"lib\" directories).\nSFML_INCLUDE_DIR will also be inferred from this.")
-find_package(SFML 2 COMPONENTS audio window system REQUIRED)
+find_package(SFML 2 COMPONENTS audio graphics window system REQUIRED)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
-endif()
-
-# Add OpenGL
-find_package(OpenGL REQUIRED)
-if (OPENGL_FOUND)
-    include_directories(${OPENGL_INCLUDE_DIR})
-    target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 endif()
 
 # Copy assets to binary directory after building
@@ -52,6 +45,7 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${SFML_ROOT}/bin/openal32.dll
                 ${SFML_ROOT}/bin/sfml-audio-2.dll
+                ${SFML_ROOT}/bin/sfml-graphics-2.dll
                 ${SFML_ROOT}/bin/sfml-system-2.dll
                 ${SFML_ROOT}/bin/sfml-window-2.dll
                 $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>)

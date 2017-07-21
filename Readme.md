@@ -87,7 +87,6 @@ The Chip-8 originally took input through a hex keypad. The default keyboard mapp
 
 ## Upcoming Features
 
-* Graphics overhaul
 * GUI
 * Save/load state
 * Debugger

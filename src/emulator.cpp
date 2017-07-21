@@ -4,6 +4,9 @@
 
 #include "emulator.hpp"
 
+const sf::Color Emulator::COLOR_SPRITE_DEFAULT = sf::Color(0xFF, 0xFF, 0xFF); // #ffffff: white.
+const sf::Color Emulator::COLOR_BACKGROUND_DEFAULT = sf::Color(0x1c, 0x28, 0x41); // #1c2841: a pleasant shade of blue.
+
 // Default keyboard mapping.
 // (Keyboard -> Hex Keypad)
 //      1234 -> 123C
@@ -25,6 +28,9 @@ Emulator::Emulator() {
 
     window_width  = WINDOW_WIDTH_DEFAULT;
     window_height = WINDOW_HEIGHT_DEFAULT;
+
+    color_sprite = COLOR_SPRITE_DEFAULT;
+    color_background = COLOR_BACKGROUND_DEFAULT;
 }
 
 void Emulator::run() {
@@ -56,69 +62,46 @@ void Emulator::startup() {
     loadFile();
 
     setupWindow();
-    setupOpenGLContext();
     setupSound();
 }
 
 void Emulator::setupWindow() {
     window.create(sf::VideoMode(window_width, window_height), "Chip-8 Emulator");
+    view.setSize(window_width, window_height);
+    view.setCenter(view.getSize().x / 2, view.getSize().y / 2);
+    setAspect();
+
+    texture.create(Chip8::WIDTH, Chip8::HEIGHT);
+    sprite.setTexture(texture);
+    sprite.setScale(sf::Vector2f(view.getSize().x / (float)texture.getSize().x,
+                                 view.getSize().y / (float)texture.getSize().y));
     have_focus = true;
 }
 
 void Emulator::setAspect() {
-    int view_width,
-        view_height;
-    // Size parameters proportionate to each other.
-    const int proportionate_width = window_height * Chip8::ASPECT_RATIO,
-              proportionate_height = window_width / Chip8::ASPECT_RATIO;
+    float window_ratio = window.getSize().x / (float)window.getSize().y;
+    float view_ratio = view.getSize().x / (float)view.getSize().y;
+    float sizeX = 1;
+    float sizeY = 1;
+    float posX = 0;
+    float posY = 0;
 
-    if (proportionate_height > window_height) {
-        view_width = proportionate_width;
-        view_height = window_height;
-        pixel_size = proportionate_width / Chip8::WIDTH;
+    if (window_ratio >= view_ratio) { // Window is too wide relative to aspect ratio.
+        // Pillarbox
+        sizeX = view_ratio / window_ratio;
+        posX = (1 - sizeX) / 2.f;
     }
-    else { // (proportionate_width >= window_width)
-        view_width = window_width;
-        view_height = proportionate_height;
-        pixel_size = proportionate_height / Chip8::HEIGHT;
+    else { // Window is too tall relative to aspect ratio.
+        // Letterbox
+        sizeY = window_ratio / view_ratio;
+        posY = (1 - sizeY) / 2.f;
     }
 
-    // Coordinates of the lower-left corner of the viewport
-    const int coord_x =  (window_width - view_width)  / 2,
-              coord_y = (window_height - view_height) / 2;
-
-    glViewport(coord_x, coord_y, view_width, view_height);
-}
-
-void Emulator::setupOpenGLContext() {
-    setAspect();
-    // Change the coordinate scale from (-1 - +1) to (0 - window.getSize().[x/y])
-    glOrtho(
-        0,                  // left
-        window.getSize().x, // right
-        window.getSize().y, // bottom
-        0,                  // top
-        0,                  // zNear
-        1                   // zFar
-    );
-    // Offset to translate coordinate arguments. Needed to center points.
-    // TODO: This isn't quite right for different aspect ratios.
-    //       To be fixed when the graphics are overhauled.
-    const GLfloat offset = pixel_size / 2;
-    glTranslatef(offset, offset, 0);
-
-    // Set scale to multiply coordinate arguments. Needed to fill the context.
-    const int proportionate_width = window_height * Chip8::ASPECT_RATIO,
-              proportionate_height = window_width / Chip8::ASPECT_RATIO;
-    glScalef(proportionate_height / Chip8::HEIGHT,
-             proportionate_width  / Chip8::WIDTH,
-             1);
-
-    // Set colors.
-    // TODO: Make customizable.
-    // TODO: Implement letter/pillar-boxing (black bars).
-    //glColor3ub(0, 0xFF, 0); // Sprite color
-    glClearColor(0x1c / 255.0, 0x28 / 255.0, 0x41 / 255.0, 1); // Background color. #1c2841, a pleasant shade of blue.
+    view.setViewport(sf::FloatRect(posX,
+                                   posY,
+                                   sizeX,
+                                   sizeY));
+    window.setView(view);
 }
 
 void Emulator::setupSound() {
@@ -218,22 +201,39 @@ void Emulator::handleInput() {
     }
 }
 
-// TODO!: This should be overhauled; points turned out to be the wrong choice.
-//        Being square, they don't fill the screen properly (stretch) when using a different aspect ratio.
-//        The right approach appears to be rectangles after all.
 void Emulator::updateScreen() {
     if (chip8.draw_flag) {
-        glClear(GL_COLOR_BUFFER_BIT); // Clear screen.
-        glPointSize(pixel_size); // Expanded points here are square, by default.
-        glBegin(GL_POINTS); // Set vertices whereupon points are drawn.
+        window.clear(sf::Color::Black);
+
+        // SFML forces the use of a C style array here.
+        // Each set of 4 is read as a 32-bit RGBA pixel.
+        sf::Uint8 pixels[Chip8::HEIGHT * Chip8::WIDTH * 4];
+
         for (int row = 0; row < Chip8::HEIGHT; ++row) {
             for (int col = 0; col < Chip8::WIDTH; ++col) {
+                const int i = (col + row*Chip8::WIDTH) * 4;
+
                 if (chip8.getPixelAt(col, row)) {
-                    glVertex2f(col, row); }
+                    // Write sprite color.
+                    pixels[i]     = color_sprite.r;
+                    pixels[i + 1] = color_sprite.g;
+                    pixels[i + 2] = color_sprite.b;
+                    pixels[i + 3] = color_sprite.a;
+                }
+                else {
+                    // Write background color.
+                    pixels[i]     = color_background.r;
+                    pixels[i + 1] = color_background.g;
+                    pixels[i + 2] = color_background.b;
+                    pixels[i + 3] = color_background.a;
+                }
             }
         }
-        glEnd();
+
+        texture.update(pixels);
+        window.draw(sprite);
         window.display();
+
         chip8.draw_flag = false;
     }
 }
