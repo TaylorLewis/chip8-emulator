@@ -17,6 +17,9 @@ void printHelpMessage() {
         << "\t\tSet the window width.  (Default: 1024)\n\n"
         << "\t-H <int>, --height <int>\n"
         << "\t\tSet the window height. (Default:  512)\n\n"
+        << "\t-f, --fullscreen\n"
+        << "\t\tEnables fullscreen mode.\n"
+        << "\t\tIf set, window size settings are ignored.\n\n"
         << "\t-o, --old\n"
         << "\t\tChanges some instructions to their old versions.\n"
         << "\t\tNecessary for some ROMs to function properly."
@@ -79,6 +82,10 @@ void handleArguments(const int& argc, char* argv[], Emulator& emulator) {
             else {
                 std::cerr << "Custom height setting failed (No number specified)." << std::endl; }
             ++i;
+        }
+        else if (arg == "-f"
+            || arg == "--fullscreen") {
+            emulator.fullscreen = true;
         }
         else if (arg == "-o"
                   || arg == "--old") {

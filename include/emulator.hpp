@@ -34,6 +34,7 @@ public:
     int window_height;
     sf::Color color_sprite;
     sf::Color color_background;
+    bool fullscreen;
 
 private:
     // Default window size parameters.

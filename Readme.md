@@ -61,10 +61,14 @@ Options:
     	Print this help text and exit.
         
     -w <int>, --width <int>
-    	Set the window width.  Default: 1024
+    	Set the window width.  (Default: 1024)
         
     -H <int>, --height <int>
-    	Set the window height. Default:  512
+    	Set the window height. (Default:  512)
+
+    -f, --fullscreen
+        Enables fullscreen mode.
+        If set, window size settings are ignored.
     
     -o, --old
         Changes some instructions to their old versions.

@@ -34,6 +34,7 @@ Emulator::Emulator() {
 
     rom_path = ROM_PATH_DEFAULT;
     default_rom_path = true;
+    fullscreen = false;
 }
 
 void Emulator::run() {
@@ -69,7 +70,9 @@ void Emulator::startup() {
 }
 
 void Emulator::setupWindow() {
-    window.create(sf::VideoMode(window_width, window_height), "Chip-8 Emulator");
+    auto style = fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
+
+    window.create(sf::VideoMode(window_width, window_height), "Chip-8 Emulator", style);
     view.setSize(window_width, window_height);
     view.setCenter(view.getSize().x / 2, view.getSize().y / 2);
     setAspect();
