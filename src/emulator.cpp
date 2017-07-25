@@ -31,6 +31,9 @@ Emulator::Emulator() {
 
     color_sprite = COLOR_SPRITE_DEFAULT;
     color_background = COLOR_BACKGROUND_DEFAULT;
+
+    rom_path = ROM_PATH_DEFAULT;
+    default_rom_path = true;
 }
 
 void Emulator::run() {
@@ -110,42 +113,48 @@ void Emulator::setupSound() {
 }
 
 void Emulator::loadFile() {
-    std::ifstream rom(rom_path, std::ios::binary);
+    if (default_rom_path) {
+        std::cout << "File path not specified. Trying default: " << ROM_PATH_DEFAULT << std::endl; }
 
-    if (rom.fail()) {
+    std::ifstream file_stream(rom_path, std::ios::binary);
+
+    checkStream(file_stream);
+    checkFileSize(file_stream);
+
+    // Copy file stream into buffer
+    std::vector<uint8_t> rom_buffer((std::istreambuf_iterator<char>(file_stream)),
+                                    std::istreambuf_iterator<char>());
+
+    chip8.load(rom_buffer);
+
+    std::cout << "File loaded." << std::endl;
+}
+
+void Emulator::checkStream(std::ifstream& file_stream) {
+    if (file_stream.fail()) {
         std::cerr
-            << "Couldn't load file at designated path: " << rom_path << '\n'
-            << "Usage: chip8 [OPTION]... [FILE]\n\n"
-            << "Trying default: ./assets/roms/PONG" << std::endl;
-        rom.open("./assets/roms/PONG", std::ios::binary);
-        if (rom.fail()) {
-            std::cerr << "Couldn't load file at default path either." << std::endl;
-            throw std::runtime_error("Failed ifstream");
-        }
+            << "Couldn't load file at path: " << rom_path << '\n'
+            << "Usage: chip8 chip8 [options] <path-to-rom-file>" << std::endl;
+        throw std::runtime_error("Failed ifstream");
     }
-    if (rom.bad()) {
+    else if (file_stream.bad()) {
         std::cerr << "Unknown file error." << std::endl;
         throw std::runtime_error("Bad ifstream");
     }
+}
 
+void Emulator::checkFileSize(std::ifstream& file_stream) {
     // Get length of file
-    rom.seekg(0, std::ios::end);
-    const int rom_size = (int)rom.tellg();
-    rom.seekg(0, std::ios::beg);
+    file_stream.seekg(0, std::ios::end);
+    const std::streampos rom_size = (int)file_stream.tellg();
+    file_stream.seekg(0, std::ios::beg);
 
     if (rom_size > Chip8::ROM_SIZE_MAX) {
-        std::cerr << "File too large to fit into memory."
-            << " Filesize/max: " << rom_size << "/" << Chip8::ROM_SIZE_MAX << " bytes." << std::endl;
-        throw std::runtime_error("File too large");
+        std::cerr 
+            << "File too large: " << rom_size << " bytes.\n"
+            << "Max file size:  " << Chip8::ROM_SIZE_MAX << " bytes." << std::endl;
+        throw std::runtime_error("File larger than maximum");
     }
-
-    // Copy ROM into buffer
-    char rom_buffer[Chip8::ROM_SIZE_MAX];
-    rom.read(rom_buffer, rom_size);
-
-    chip8.load(rom_buffer, rom_size);
-
-    std::cout << "File loaded." << std::endl;
 }
 
 void Emulator::handleInput() {
@@ -245,6 +254,11 @@ void Emulator::handleSound() {
 
 void Emulator::setOldInstructions(const bool& value) {
     chip8.setOldInstructions(value); }
+
+void Emulator::setRomPath(const std::string& path) {
+    rom_path = path;
+    default_rom_path = false;
+}
 
 
 

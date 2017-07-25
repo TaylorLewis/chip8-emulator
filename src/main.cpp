@@ -7,7 +7,8 @@
 
 void printHelpMessage() {
     std::cout
-        << "A Chip-8 emulator.\n\n"
+        << "A Chip-8 emulator. Runs Chip-8 ROMs.\n"
+        << "If no file path is specified, will default to: " << Emulator::ROM_PATH_DEFAULT << "\n\n"
         << "Usage: chip8 [options] <path-to-rom-file>\n\n"
         << "Options:\n"
         << "\t-h  --help\n"
@@ -84,7 +85,7 @@ void handleArguments(const int& argc, char* argv[], Emulator& emulator) {
             emulator.setOldInstructions(true);
         }
         else if (i == argc - 1) {
-            emulator.rom_path = arg;
+            emulator.setRomPath(arg);
         }
         else {
             std::cerr << "Unrecognized argument: " << arg << std::endl; }

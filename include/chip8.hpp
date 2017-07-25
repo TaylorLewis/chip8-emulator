@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <array>
+#include <vector>
 #include <chrono>
 
 // Models a Chip-8 CPU. Also contains the memory.
@@ -22,7 +23,7 @@ public:
     Chip8();
 
     // Load Chip-8 program data into memory.
-    void load(const char rom_buffer[], const int& rom_size);
+    void load(const std::vector<uint8_t>& rom_buffer);
 
     // Excecutes the next instruction and decrements timers.
     void step();

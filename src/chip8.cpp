@@ -4,7 +4,7 @@
 #include "chip8.hpp"
 
 bool Chip8::soundReady() {
-    return sound_timer > SOUND_TIMER_THRESHOLD;
+    return (sound_timer > SOUND_TIMER_THRESHOLD);
 }
 
 bool Chip8::getPixelAt(const int& x, const int& y) {
@@ -81,9 +81,9 @@ Chip8::Chip8() {
     }
 }
 
-void Chip8::load(const char rom_buffer[], const int& rom_size) {
-    for (int i = 0; i < rom_size; ++i) {
-        memory[i + PROGRAM_START] = (uint8_t)rom_buffer[i];
+void Chip8::load(const std::vector<uint8_t>& rom_buffer) {
+    for (size_t i = 0; i < rom_buffer.size(); ++i) {
+        memory[i + PROGRAM_START] = rom_buffer[i];
     }
 }
 

@@ -16,6 +16,8 @@
 // running the Chip-8 object, and handling its input/output.
 class Emulator {
 public:
+    static constexpr auto ROM_PATH_DEFAULT = "./assets/roms/PONG";
+
     Emulator();
     // The main emulation loop.
     // Takes input, executes the next instruction, updates screen, and plays sound.
@@ -26,12 +28,13 @@ public:
     // Sets 'old_instructions' in Chip-8,
     // which alters some instructions back to their old versions.
     void setOldInstructions(const bool& value);
+    // Sets 'rom_path' and also untoggles 'default_rom_path'.
+    void setRomPath(const std::string& path);
 
     int window_width;
     int window_height;
     sf::Color color_sprite;
     sf::Color color_background;
-    std::string rom_path;
 
 private:
     // Default window size parameters.
@@ -53,13 +56,16 @@ private:
     // I rather like the little boop; but it's really not essential.
     void setupSound();
 
-    // Loads file into buffer and passes it to the Chip-8. If loading fails, tries to load "./assets/roms/PONG".
-    // Should that fail, or if the file is too large to be a Chip-8 ROM, then an exception is thrown.
+    // Loads file into buffer and passes it to the Chip-8.
     //
     // To my knowledge, there's no general way to detect whether a file is a Chip-8 ROM;
     // there is no standard file extension or header. As such, any other input,
     // that doesn't exceed the size limit, results in undefined behavior.
     void loadFile();
+    // Checks stream's fail and bad bits. If either is set, an exception is thrown.
+    void checkStream(std::ifstream& file_stream);
+    // Throws exception if file size is greater than maximum Chip-8 ROM size.
+    void checkFileSize(std::ifstream& rom);
 
     // Handles events like window focus, resizing, or closing.
     // Updates 'chip8.keys_pressed' with the state of corresponding keys in 'keypad_map'.
@@ -78,7 +84,13 @@ private:
     sf::Sprite sprite;
 
     sf::SoundBuffer sound_buffer;
+    // Plays audio sample from 'sound_buffer'.
     sf::Sound sound;
+
+    // Path to ROM file.
+    std::string rom_path;
+    // True unless new rom path is set.
+    bool default_rom_path;
 
     Chip8 chip8;
 
