@@ -1,5 +1,4 @@
-#ifndef EMULATOR_HPP
-#define EMULATOR_HPP
+#pragma once
 
 #include <stdint.h>
 #include <unordered_map>
@@ -113,5 +112,3 @@ private:
             std::chrono::high_resolution_clock::time_point previous;
     };
 };
-
-#endif

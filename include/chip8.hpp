@@ -1,5 +1,4 @@
-#ifndef CHIP8_HPP
-#define CHIP8_HPP
+#pragma once
 
 #include <stdint.h>
 #include <array>
@@ -130,5 +129,3 @@ public:
     // The Chip-8 has little specification for timing; so this is a guess based largely on feel.
     static constexpr std::chrono::nanoseconds TIME_PER_STEP = TIME_PER_TIMER_DECREMENT / 10; // ~1/600 of a second
 };
-
-#endif
